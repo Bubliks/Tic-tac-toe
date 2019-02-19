@@ -30,7 +30,8 @@ namespace WindowsFormsApplication2
         {
             WIN = 1,
             FAIL = -1,
-            PROCESS = 0
+            PROCESS = 2,
+            NULL = 0 
         }
 
         public Form1()
@@ -93,13 +94,12 @@ namespace WindowsFormsApplication2
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
             clearMap();
 
             pictureBox1.Enabled = true;
             Gamego = true;
             Hod = false;
-            Hod_krest = false;
+            Hod_krest = true;
             Ch = 0;
         }
 
@@ -184,13 +184,11 @@ namespace WindowsFormsApplication2
                  WIDTH_PART_MAP - 2 * offset_width, HEIGHT_PART_MAP - 2 * offset_height);
         }
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
-            Hod = false;
-            Hod_krest = false;
-            Ch++;
 
-            while (!hod_krest)
+
+        private Point GetPointCross(MouseEventArgs e)
+        {
+            while (true)
             {
                 Point point = GetPosition(e.X, e.Y);
                 if (point.X == FAIL)
@@ -199,11 +197,29 @@ namespace WindowsFormsApplication2
                 }
                 if (M[point.Y, point.X] == EMPTY)
                 {
-                    DrawCross(point);
                     M[point.Y, point.X] = PLAYER_CLICKED;
-                    Hod_krest = true;
+                    return point;
                 }
             }
+        }
+
+        private void MoveCross(MouseEventArgs e)
+        {
+            Point point = GetPointCross(e);
+            DrawCross(point);
+        }
+
+        private void MoveCircle()
+        {
+
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            Hod = false;
+            Ch++;
+
+            MoveCross(e);
 
             gameStatus status = isWin();
             if (status == gameStatus.WIN)
@@ -290,10 +306,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
+                        M[0, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
                     }
                 }
 
@@ -301,10 +315,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
+                        M[1, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
                     }
                 }
 
@@ -312,30 +324,24 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                        }
+                        M[1, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
                     }
                 }
                 if (M[1, 1] == -1 && M[2, 0] == -1)
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
                 if (M[1, 1] == -1 && M[0, 2] == -1)
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
 
@@ -343,10 +349,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[2, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
-                        }
+                        M[2, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
                     }
                 }
 
@@ -354,10 +358,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                        }
+                        M[0, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
                     }
                 }
 
@@ -365,10 +367,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
 
@@ -376,10 +376,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
+                        M[0, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
                     }
                 }
 
@@ -387,10 +385,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
 
@@ -398,10 +394,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
+                        M[0, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
                     }
                 }
 
@@ -409,10 +403,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[2, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
+                        M[2, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
                     }
                 }
 
@@ -420,47 +412,35 @@ namespace WindowsFormsApplication2
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
-
-
 
                 if (M[2, 2] == -1 && M[1, 2] == -1)
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
-
 
                 if (M[0, 2] == -1 && M[1, 2] == -1)
                 {
                     if (M[2, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
+                        M[2, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
                     }
                 }
-
 
                 if (M[0, 0] == -1 && M[0, 2] == -1)
                 {
                     if (M[0, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                        }
+                        M[0, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
                     }
                 }
 
@@ -468,22 +448,17 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                        }
+                        M[1, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
                     }
                 }
-
 
                 if (M[2, 2] == -1 && M[2, 0] == -1)
                 {
                     if (M[2, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
-                        }
+                        M[2, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
                     }
                 }
 
@@ -491,10 +466,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
+                        M[1, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
                     }
                 }
 
@@ -502,10 +475,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
+                        M[1, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
                     }
                 }
 
@@ -515,10 +486,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
+                        M[1, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
                     }
                 }
 
@@ -526,30 +495,26 @@ namespace WindowsFormsApplication2
                 {
                     if (M[1, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[1, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                        }
+                        M[1, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
                     }
                 }
+
                 if (M[1, 1] == 1 && M[2, 0] == 1)
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
+
                 if (M[1, 1] == 1 && M[0, 2] == 1)
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
 
@@ -557,10 +522,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[2, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
-                        }
+                        M[2, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);   
                     }
                 }
 
@@ -568,10 +531,8 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 1] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                        }
+                        M[0, 1] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);                  
                     }
                 }
 
@@ -739,30 +700,24 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
+                        M[0, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
                     }
                 }
                 if (M[2, 1] == 1 && M[1, 0] == 1)
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
                 if (M[2, 1] == 1 && M[1, 2] == 1)
                 {
                     if (M[2, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
+                        M[2, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
                     }
                 }
 
@@ -771,52 +726,42 @@ namespace WindowsFormsApplication2
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
                 if (M[0, 2] == 1 && M[1, 0] == 1)
                 {
                     if (M[0, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
+                        M[0, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
                     }
                 }
                 if (M[1, 0] == 1 && M[2, 2] == 1)
                 {
                     if (M[2, 0] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
+                        M[2, 0] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
                     }
                 }
                 if (M[1, 2] == 1 && M[2, 0] == 1)
                 {
                     if (M[2, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
+                        M[2, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
                     }
                 }
 
                 //ХАРДМОД
-                    if (M[0, 1] == 1 && M[2, 2] == 1)
+                if (M[0, 1] == 1 && M[2, 2] == 1)
                 {
                     if (M[0, 2] == 0 && (!Hod))
                     {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
+                        M[0, 2] = -1; Hod = true;
+                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
                 if (M[2, 0] == 1 && M[0,1 ] == 1)
@@ -996,24 +941,26 @@ namespace WindowsFormsApplication2
             }
 
             status = isWin();
-            if (status == gameStatus.WIN)
+            if (status != gameStatus.PROCESS)
             {
-                //Gr.DrawLine(Pens.Green, 61, 13, 61, 440);
-                MessageBox.Show("Ты Победил!");
-                Gamego = false;
-                pictureBox1.Enabled = false;
-                P += 1;
-                label3.Text = P.ToString();
-            }
+                string messageEnd = "";
+                if (status == gameStatus.WIN)
+                {
+                    messageEnd = "Ты Победил!";
+                    P += 1;
+                }
+                else
+                {
+                    messageEnd = "Ты Проиграл!";
+                    N = +1;
+                }
 
-            if (status == gameStatus.FAIL)
-            {
-                // Gr.DrawLine(Pens.Green, 61, 13, 61, 440);
-                MessageBox.Show("Ты Проиграл!");
+                MessageBox.Show(messageEnd);
                 Gamego = false;
                 pictureBox1.Enabled = false;
-                N = +1;
-                label3.Text = N.ToString();
+               
+                label3.Text = P.ToString();
+                label4.Text = N.ToString();
             }
 
             pictureBox1.Image = Bm;
