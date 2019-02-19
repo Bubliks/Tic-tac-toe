@@ -9,22 +9,6 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication2
 {
-    public class Pair<T, U>
-    {
-        public Pair()
-        {
-        }
-
-        public Pair(T first, U second)
-        {
-            this.First = first;
-            this.Second = second;
-        }
-
-        public T First { get; set; }
-        public U Second { get; set; }
-    };
-
     public partial class Form1 : Form
     {
         const int PLAYER_CLICKED = 1;
@@ -62,7 +46,6 @@ namespace WindowsFormsApplication2
 
             WIDTH_PART_MAP = WIDTH_MAP / COUNT_PART;
             HEIGHT_PART_MAP = HEIGHT_MAP / COUNT_PART;
-            //textBox5.Text = (1 / 2).ToString();
             clearMap();
         }
 
@@ -91,6 +74,7 @@ namespace WindowsFormsApplication2
         int n = 0;
         int p = 0;
         int c = 0;
+        int moveCount = 0;
 
         bool gamego = true;
         int ch = 0;
@@ -114,9 +98,7 @@ namespace WindowsFormsApplication2
 
             pictureBox1.Enabled = true;
             Gamego = true;
-            Hod = false;
-            Hod_krest = true;
-            Ch = 0;
+            moveCount = 0;
         }
 
         private bool CheckClicked(int i, int somebodyClicked)
@@ -145,7 +127,7 @@ namespace WindowsFormsApplication2
             return false;
         }
 
-        private gameStatus isWin()
+        private gameStatus isWin(int moveCount)
         {
             for (int i = 0; i < 3; ++i)
             {
@@ -166,6 +148,11 @@ namespace WindowsFormsApplication2
             if (CheckClicked(BOT_CLICKED))
             {
                 return gameStatus.FAIL;
+            }
+
+            if (moveCount == Math.Pow(COUNT_PART, 2))
+            {
+                return gameStatus.NULL;
             }
 
             return gameStatus.PROCESS;
@@ -204,23 +191,22 @@ namespace WindowsFormsApplication2
 
         private Point GetPointCross(MouseEventArgs e)
         {
-            while (true)
+            Point point = GetPosition(e.X, e.Y);
+            if (point.X == FAIL || M[point.Y, point.X] != EMPTY)
             {
-                Point point = GetPosition(e.X, e.Y);
-                if (point.X == FAIL)
-                {
-                    continue;
-                }
-                if (M[point.Y, point.X] == EMPTY)
-                {
-                    M[point.Y, point.X] = PLAYER_CLICKED;
-                    return point;
-                }
+                throw new Exception("Incorrect point!");
             }
+            return point;
+            
         }
 
-        private Point GetPointCircle()
+        private Point GetPointCircle(int countMoves)
         {
+            if (countMoves == 1)
+            {  
+               return GetFirstPoint();
+            }
+
             Point point = GetWinPoint();
             if (point.X != FAIL)
             {
@@ -239,18 +225,17 @@ namespace WindowsFormsApplication2
         private void MoveCross(MouseEventArgs e)
         {
             Point point = GetPointCross(e);
-            M[point.X, point.Y] = PLAYER_CLICKED;
+            M[point.Y, point.X] = PLAYER_CLICKED;
             DrawCross(point);
         }
 
-        private void MoveCircle()
+        private void MoveCircle(int countMoves)
         {
-            Point point = GetPointCircle();
+            Point point = GetPointCircle(countMoves);
             M[point.X, point.Y] = BOT_CLICKED;
-            DrawCircle(point);
+            DrawCircle(new Point(point.Y, point.X));
         }
 
-        //НУЖНО ЕЩЕ ПОМЕТИТЬ ТОЧКУ В МАТРИЦЕ КАК ЗАПОЛНЕННУЮ
         private Point GetWinPoint()
         {
             Dictionary<Point, Pair<int, int>[]> winPoints = new Dictionary<Point, Pair<int, int>[]>();
@@ -438,106 +423,34 @@ namespace WindowsFormsApplication2
             {
                 point.X = g.Next(0, 3);
                 point.Y = g.Next(0, 3);
-            } while (M[point.X, point.Y] != 0);
+            } while (M[point.Y, point.X] != EMPTY);
 
             return point;
         }
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        private Point GetFirstPoint()
         {
-            Hod = false;
-            Ch++;
-
-            MoveCross(e);
-
-            gameStatus status = isWin();
-            if (status == gameStatus.WIN)
+            if (M[1, 1] == EMPTY)
             {
-                //Gr.DrawLine(Pens.Green, 61, 13, 61, 440);
-                MessageBox.Show("Ты Победил!");
-                Gamego = false;
-                pictureBox1.Enabled = false;
-                P += 1;
-                label3.Text = P.ToString();
+                return new Point(1, 1);
             }
 
-            if (status == gameStatus.FAIL)
-            {
-                // Gr.DrawLine(Pens.Green, 61, 13, 61, 440);
-                MessageBox.Show("Ты Проиграл!");
-                Gamego = false;
-                pictureBox1.Enabled = false;
-                N = +1;
-                label3.Text = N.ToString();
-            }
+            return GetRandomPoint();
+        }
 
-            //------------   
-            if (Ch == 1)
+        private bool checkGame(int moveCount)
+        {
+            textBox5.Text = "";
+            for (int i = 0; i < 3; i++)
             {
-                if ((M[1, 1] == EMPTY) && (!Hod))
+                for (int j = 0; j < 3; j++)
                 {
-                    M[1, 1] = BOT_CLICKED;
-                    Hod = true;
-                    DrawCircle(new Point(1, 1));
+                    textBox5.Text += M[i, j].ToString();
                 }
-                else
-                {
-                    if (M[1, 1] == PLAYER_CLICKED)
-                    {
-                        Random rand_click = new Random();
-                        Point point = new Point(rand_click.Next(0, 4) / 2, rand_click.Next(0, 4) / 2);
-                        
-                        if ((M[point.Y * 2, point.X * 2] == EMPTY) && (!Hod))
-                        {
-                            M[point.Y * 2, point.X * 2] = BOT_CLICKED;
-                            Hod = true;
-                            DrawCircle(point);
-                        }
-
-                        for (int i = 0; i < COUNT_PART - 1; i += 2)
-                        {
-                            if ((M[0, i] == EMPTY) && (!Hod))
-                            {
-                                M[0, i] = BOT_CLICKED;
-                                Hod = true;
-                                DrawCircle(new Point(0, i));
-                            }
-                        }
-
-                        if ((M[2, 0] == 0) && (!Hod))
-                        {
-                            M[2, 0] = -1;
-                            Hod = true;
-                            DrawCircle(new Point(2, 0));
-                        }
-
-                        if ((M[2, 2] == 0) && (!Hod))
-                        {
-                            M[2, 2] = -1;
-                            Hod = true;
-                            DrawCircle(new Point(2, 2));
-                        }
-                    }
-                }
-            }
-            else
-            {
-
-              
-
-
+                textBox5.Text += Environment.NewLine;
             }
 
-
-            MessageBox.Show("Ничья! :)");
-            Gamego = false;
-            C += 1;
-            label6.Text = C.ToString();
-            
-
-          
-
-            status = isWin();
+            gameStatus status = isWin(moveCount);
             if (status != gameStatus.PROCESS)
             {
                 string messageEnd = "";
@@ -546,21 +459,66 @@ namespace WindowsFormsApplication2
                     messageEnd = "Ты Победил!";
                     P += 1;
                 }
-                else
+                else if (status == gameStatus.FAIL)
                 {
                     messageEnd = "Ты Проиграл!";
-                    N = +1;
+                    N += 1;
+                }
+                else
+                {
+                    messageEnd = "Ничья! :)";
+                    C += 1;
                 }
 
+             
                 MessageBox.Show(messageEnd);
-                Gamego = false;
                 pictureBox1.Enabled = false;
-               
+                
+
                 label3.Text = P.ToString();
                 label4.Text = N.ToString();
+                label6.Text = C.ToString();
+                return false;
+            }
+            return true;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (gamego)
+            {
+                try { 
+                    MoveCross(e);
+                }
+                catch
+                {
+                    return;
+                }
+                if (checkGame(++moveCount) == false)
+                {
+                    return;
+                }
+
+                MoveCircle(moveCount);
+                gamego = checkGame(++moveCount);
             }
 
-            pictureBox1.Image = Bm;
+            pictureBox1.Image = Bm;  
         }
     }
+    public class Pair<T, U>
+    {
+        public Pair()
+        {
+        }
+
+        public Pair(T first, U second)
+        {
+            this.First = first;
+            this.Second = second;
+        }
+
+        public T First { get; set; }
+        public U Second { get; set; }
+    };
 }
