@@ -9,6 +9,22 @@ using System.Windows.Forms;
 
 namespace WindowsFormsApplication2
 {
+    public class Pair<T, U>
+    {
+        public Pair()
+        {
+        }
+
+        public Pair(T first, U second)
+        {
+            this.First = first;
+            this.Second = second;
+        }
+
+        public T First { get; set; }
+        public U Second { get; set; }
+    };
+
     public partial class Form1 : Form
     {
         const int PLAYER_CLICKED = 1;
@@ -203,11 +219,17 @@ namespace WindowsFormsApplication2
             }
         }
 
+        private Point GetPointCircle()
+        {
+            
+        }
+
         private void MoveCross(MouseEventArgs e)
         {
             Point point = GetPointCross(e);
             DrawCross(point);
         }
+
 
         private void MoveCircle()
         {
@@ -293,14 +315,39 @@ namespace WindowsFormsApplication2
             }
             else
             {
-                if (M[0, 0] == -1 && M[1, 1] == -1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        M[2, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                    }
-                }
+                Pair<int, int>[] tt = new Pair<int, int>[] {
+                    new Pair<int, int>(M[0, 0], M[1, 1]),
+                    new Pair<int, int>(M[2, 0], M[2, 1]),
+                    new Pair<int, int>(M[0, 2], M[1, 2]),
+
+                };
+
+                //if (M[0, 0] == -1 && M[1, 1] == -1)
+                //{
+                //    if (M[2, 2] == 0 && (!Hod))
+                //    {
+                //        M[2, 2] = -1; Hod = true;
+                //        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
+                //    }
+                //}
+
+                //if (M[2, 0] == -1 && M[2, 1] == -1)
+                //{
+                //    if (M[2, 2] == 0 && (!Hod))
+                //    {
+                //        M[2, 2] = -1; Hod = true;
+                //        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
+                //    }
+                //}
+
+                //if (M[0, 2] == -1 && M[1, 2] == -1)
+                //{
+                //    if (M[2, 2] == 0 && (!Hod))
+                //    {
+                //        M[2, 2] = -1; Hod = true;
+                //        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
+                //    }
+                //}
 
                 if (M[2, 2] == -1 && M[1, 1] == -1)
                 {
@@ -328,6 +375,7 @@ namespace WindowsFormsApplication2
                         Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
                     }
                 }
+
                 if (M[1, 1] == -1 && M[2, 0] == -1)
                 {
                     if (M[0, 2] == 0 && (!Hod))
@@ -336,6 +384,7 @@ namespace WindowsFormsApplication2
                         Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
                     }
                 }
+
                 if (M[1, 1] == -1 && M[0, 2] == -1)
                 {
                     if (M[2, 0] == 0 && (!Hod))
@@ -399,14 +448,7 @@ namespace WindowsFormsApplication2
                     }
                 }
 
-                if (M[2, 0] == -1 && M[2, 1] == -1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        M[2, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                    }
-                }
+              
 
                 if (M[2, 2] == -1 && M[2, 1] == -1)
                 {
@@ -426,14 +468,7 @@ namespace WindowsFormsApplication2
                     }
                 }
 
-                if (M[0, 2] == -1 && M[1, 2] == -1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        M[2, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                    }
-                }
+              
 
                 if (M[0, 0] == -1 && M[0, 2] == -1)
                 {
