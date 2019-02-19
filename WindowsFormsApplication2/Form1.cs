@@ -105,12 +105,20 @@ namespace WindowsFormsApplication2
         {
             if (M[i, 1] == somebodyClicked)
             {
-                if ((M[i, 0] == somebodyClicked && M[i, 2] == somebodyClicked) ||
-                    (M[0, i] == somebodyClicked && M[2, i] == somebodyClicked))
+                if (M[i, 0] == somebodyClicked && M[i, 2] == somebodyClicked)
                 {
                     return true;
                 }
             }
+            if (M[1, i] == somebodyClicked)
+            {
+                if (M[0, i] == somebodyClicked && M[2, i] == somebodyClicked)
+                {
+                    return true;
+                }
+            }
+  
+                    
             return false;
         }
 
