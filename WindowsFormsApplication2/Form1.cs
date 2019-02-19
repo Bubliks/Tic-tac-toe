@@ -221,28 +221,37 @@ namespace WindowsFormsApplication2
 
         private Point GetPointCircle()
         {
-            Point point = CheckWinPoint();
+            Point point = GetWinPoint();
             if (point.X != FAIL)
             {
                 return point;
             }
-            return new Point(FAIL, FAIL);
+
+            point = GetNotWinPlayerPoint();
+            if (point.X != FAIL)
+            {
+                return point;
+            }
+
+            return GetRandomPoint();
         }
 
         private void MoveCross(MouseEventArgs e)
         {
             Point point = GetPointCross(e);
+            M[point.X, point.Y] = PLAYER_CLICKED;
             DrawCross(point);
         }
-
 
         private void MoveCircle()
         {
             Point point = GetPointCircle();
+            M[point.X, point.Y] = BOT_CLICKED;
             DrawCircle(point);
         }
 
-        private Point CheckWinPoint()
+        //НУЖНО ЕЩЕ ПОМЕТИТЬ ТОЧКУ В МАТРИЦЕ КАК ЗАПОЛНЕННУЮ
+        private Point GetWinPoint()
         {
             Dictionary<Point, Pair<int, int>[]> winPoints = new Dictionary<Point, Pair<int, int>[]>();
             winPoints.Add(
@@ -322,6 +331,116 @@ namespace WindowsFormsApplication2
                 }
             }
             return new Point(FAIL, FAIL);
+        }
+
+        private Point GetNotWinPlayerPoint()
+        {
+            Dictionary<Point, Pair<int, int>[]> unWinPlayerPoints = new Dictionary<Point, Pair<int, int>[]>();
+            unWinPlayerPoints.Add(
+                new Point(0, 0),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[0, 2], M[0, 1]),
+                    new Pair<int, int>(M[0, 2], M[1, 0]),
+
+                    new Pair<int, int>(M[2, 0], M[1, 0]),
+                    new Pair<int, int>(M[2, 0], M[0, 1]),                        
+                        
+                    new Pair<int, int>(M[0, 1], M[1, 0])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(0, 2),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[1, 1], M[2, 0]),
+                    new Pair<int, int>(M[0, 0], M[0, 1]),
+
+                    new Pair<int, int>(M[2, 2], M[1, 2]),
+                    new Pair<int, int>(M[0, 1], M[1, 2]),
+
+                    new Pair<int, int>(M[0, 0], M[1, 2]),
+                    new Pair<int, int>(M[0, 1], M[2, 2])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(2, 0),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[1, 1], M[0, 2]),
+                    new Pair<int, int>(M[0, 0], M[1, 0]),
+
+                    new Pair<int, int>(M[2, 2], M[2, 1]),
+                    new Pair<int, int>(M[2, 1], M[1, 0]),
+
+                    new Pair<int, int>(M[1, 0], M[2, 2]),
+                    new Pair<int, int>(M[2, 1], M[0, 0])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(2, 2),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[2, 0], M[2, 1]),
+                    new Pair<int, int>(M[0, 2], M[1, 2]),
+
+                    new Pair<int, int>(M[2, 1], M[1, 2]),
+                    new Pair<int, int>(M[1, 2], M[2, 0]),
+
+                    new Pair<int, int>(M[2, 1], M[0, 2])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(0, 1),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[2, 1], M[1, 1]),
+                    new Pair<int, int>(M[0, 0], M[0, 2]),
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(1, 0),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[1, 1], M[1, 2]),
+                    new Pair<int, int>(M[0, 0], M[1, 0]),
+                    new Pair<int, int>(M[0, 0], M[2, 0])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(1, 2),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[1, 1], M[1, 0]),
+                    new Pair<int, int>(M[2, 2], M[0, 2])
+                }
+            );
+            unWinPlayerPoints.Add(
+                new Point(2, 1),
+                new Pair<int, int>[] {
+                    new Pair<int, int>(M[0, 1], M[1, 1]),
+                    new Pair<int, int>(M[2, 2], M[2, 0])
+                }
+            );
+
+            foreach (KeyValuePair<Point, Pair<int, int>[]> element in unWinPlayerPoints)
+            {
+                Point point = element.Key;
+                foreach (Pair<int, int> data in element.Value)
+                {
+                    if (data.First == PLAYER_CLICKED && data.Second == PLAYER_CLICKED && M[point.X, point.Y] == EMPTY)
+                    {
+                        return point;
+                    }
+                }
+            }
+            return new Point(FAIL, FAIL);
+        }
+
+        private Point GetRandomPoint()
+        {
+            Random g = new Random();
+            Point point = new Point();
+            do
+            {
+                point.X = g.Next(0, 3);
+                point.Y = g.Next(0, 3);
+            } while (M[point.X, point.Y] != 0);
+
+            return point;
         }
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
@@ -404,465 +523,19 @@ namespace WindowsFormsApplication2
             else
             {
 
-                //                           __________
-
-                if (M[1, 1] == 1 && M[1, 2] == 1)
-                {
-                    if (M[1, 0] == 0 && (!Hod))
-                    {
-                        M[1, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                    }
-                }
-
-                if (M[1, 1] == 1 && M[1, 0] == 1)
-                {
-                    if (M[1, 2] == 0 && (!Hod))
-                    {
-                        M[1, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                    }
-                }
-
-                if (M[1, 1] == 1 && M[2, 0] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        M[0, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                    }
-                }
-
-                if (M[1, 1] == 1 && M[0, 2] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        M[2, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                    }
-                }
-
-                if (M[0, 1] == 1 && M[1, 1] == 1)
-                {
-                    if (M[2, 1] == 0 && (!Hod))
-                    {
-                        M[2, 1] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);   
-                    }
-                }
-
-                if (M[2, 1] == 1 && M[1, 1] == 1)
-                {
-                    if (M[0, 1] == 0 && (!Hod))
-                    {
-                        M[0, 1] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);                  
-                    }
-                }
-
-                if (M[0, 0] == 1 && M[0, 1] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[0, 2] == 1 && M[0, 1] == 1)
-                {
-                    if (M[0, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[0, 0] == 1 && M[1, 0] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[2, 0] == 1 && M[1, 0] == 1)
-                {
-                    if (M[0, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[2, 0] == 1 && M[2, 1] == 1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[2, 2] == 1 && M[2, 1] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
-                    }
-                }
-
-
-
-                if (M[2, 2] == 1 && M[1, 2] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
-                    }
-                }
-
-
-                if (M[0, 2] == 1 && M[1, 2] == 1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
-                    }
-                }
-
-
-                if (M[0, 0] == 1 && M[0, 2] == 1)
-                {
-                    if (M[0, 1] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[2, 2] == 1 && M[0, 2] == 1)
-                {
-                    if (M[1, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[1, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                        }
-                    }
-                }
-
-
-                if (M[2, 2] == 1 && M[2, 0] == 1)
-                {
-                    if (M[2, 1] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 1] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
-                        }
-                    }
-                }
-
-                if (M[0, 0] == 1 && M[1, 0] == 1)
-                {
-                    if (M[1, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
-                    }
-                }
-
-
-                if (M[0, 0] == 1 && M[2, 0] == 1)
-                {
-                    if (M[1, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[1, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        }
-                    }
-                }
-
-//Поздняя дороботка (unWin-хардкор)
-                if (M[0, 1] == 1 && M[1, 2] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        }
-                    }
-                }
-                if (M[0, 1] == 1 && M[1, 0] == 1)
-                {
-                    if (M[0, 0] == 0 && (!Hod))
-                    {
-                        M[0, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                    }
-                }
-                if (M[2, 1] == 1 && M[1, 0] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        M[2, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                    }
-                }
-                if (M[2, 1] == 1 && M[1, 2] == 1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        M[2, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                    }
-                }
-
-//Поздняя дороботка (Хардмод) 
-                if (M[0, 0] == 1 && M[1, 2] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        M[0, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                    }
-                }
-                if (M[0, 2] == 1 && M[1, 0] == 1)
-                {
-                    if (M[0, 0] == 0 && (!Hod))
-                    {
-                        M[0, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                    }
-                }
-                if (M[1, 0] == 1 && M[2, 2] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        M[2, 0] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                    }
-                }
-                if (M[1, 2] == 1 && M[2, 0] == 1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        M[2, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                    }
-                }
-
-                //ХАРДМОД
-                if (M[0, 1] == 1 && M[2, 2] == 1)
-                {
-                    if (M[0, 2] == 0 && (!Hod))
-                    {
-                        M[0, 2] = -1; Hod = true;
-                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                    }
-                }
-                if (M[2, 0] == 1 && M[0,1 ] == 1)
-                {
-                    if (M[0, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[0, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        }
-                    }
-                }
-                if (M[2, 1] == 1 && M[0, 0] == 1)
-                {
-                    if (M[2, 0] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 0] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        }
-                    }
-                }
-                if (M[2, 1] == 1 && M[0, 2] == 1)
-                {
-                    if (M[2, 2] == 0 && (!Hod))
-                    {
-                        {
-                            M[2, 2] = -1; Hod = true;
-                            Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        }
-                    }
-                }
-
-
-
-
-
-                //if (m[1, 1] == -1)
-                //{
-                //    if ((m[0, 0] == 0) && (!hod))
-                //    {
-                //        m[0, 0] = -1;
-                //        hod = true;
-                //        gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                //    }
-                //    else
-                //        if ((m[0, 2] == 0) && (!hod))
-                //        {
-                //            m[0, 2] = -1;
-                //            hod = true;
-                //            gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                //        }
-                //        else
-                //            if ((m[2, 0] == 0) && (!hod))
-                //            {
-                //                m[2, 0] = -1;
-                //                hod = true;
-                //                gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                //            }
-                //            else
-                //                if ((m[2, 2] == 0) && (!hod))
-                //                {
-                //                    m[2, 2] = -1;
-                //                    hod = true;
-                //                    gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                //                }
-
-                //else
-                //    if ((m[0, 1] == 0 & m[1, 2] == 1 & m[1, 1] == 1 & m[0, 0] == -1) && (!hod))
-                //    {
-                //        m[0, 1] = -1;
-                //        hod = true;
-                //        gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                //    }
-                //    else
-                //        if ((m[0, 2] == 0 & m[2, 0] == 1) && (!hod))
-                //        {
-                //            m[0, 2] = -1;
-                //            hod = true;
-                //            gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                //        }
+              
 
 
             }
 
-            //------------------------------
 
-            int x = 0;
-            int y = 0;
+            MessageBox.Show("Ничья! :)");
+            Gamego = false;
+            C += 1;
+            label6.Text = C.ToString();
             
-            int k = 0;
-            for (int i = 0; i < M.GetLength(0); i++)
-            {
-                for (int j = 0; j < M.GetLength(1); j++)
-                {
-                    if (M[i, j] == 0) k++;
-                }
-            }
 
-            if (k > 0)
-            {
-                Random g = new Random();
-                do
-                {
-                    x = g.Next(0, 3);
-                    y = g.Next(0, 3);
-                } while (M[x, y] != 0);
-            }
-            else
-            {
-                MessageBox.Show("Ничья! :)");
-                Gamego = false;
-                C += 1;
-                label6.Text = C.ToString();
-            }
-
-            if (Hod_krest && Gamego)
-            {
-                if ((M[x, y] == 0) && (!Hod))
-                {
-                    M[x, y] = -1;
-
-                    if (x == 0 && y == 0)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 0, 30, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 0 && y == 1)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 165, 30, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 0 && y == 2)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 315, 30, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 1 && y == 0)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 0, 180, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 1 && y == 1)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 165, 180, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 1 && y == 2)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 315, 180, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 2 && y == 0)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 0, 330, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 2 && y == 1)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 165, 330, 120, 120);
-                        Hod = true;
-                    }
-
-                    if (x == 2 && y == 2)
-                    {
-                        Gr.DrawEllipse(Pens.Blue, 315, 330, 120, 120);
-                        Hod = true;
-                    }
-                }
-            }
+          
 
             status = isWin();
             if (status != gameStatus.PROCESS)
