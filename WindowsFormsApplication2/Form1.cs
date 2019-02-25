@@ -448,16 +448,6 @@ namespace WindowsFormsApplication2
 
         private bool checkGame(int moveCount)
         {
-            textBox5.Text = "";
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    textBox5.Text += M[i, j].ToString();
-                }
-                textBox5.Text += Environment.NewLine;
-            }
-
             gameStatus status = isWin(moveCount);
             if (status != gameStatus.PROCESS)
             {
