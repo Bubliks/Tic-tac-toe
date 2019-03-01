@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WindowsFormsApplication2
+namespace TicTacToe
 {
     class Map
     {
@@ -89,6 +89,17 @@ namespace WindowsFormsApplication2
 
             gr.DrawEllipse(new Pen(Color.Blue, 10), point.X * WIDTH_PART_MAP + offset_width, point.Y * HEIGHT_PART_MAP + offset_height,
                  WIDTH_PART_MAP - 2 * offset_width, HEIGHT_PART_MAP - 2 * offset_height);
+        }
+
+        public Point GetPosition(int x_click, int y_click)
+        {
+            int i = x_click / WIDTH_PART_MAP;
+            int j = y_click / HEIGHT_PART_MAP;
+            if ((i >= 0 && i < WIDTH_MAP) && (j >= 0 && j < HEIGHT_MAP))
+            {
+                return new Point(i, j);
+            }
+            return new Point(FAIL, FAIL);
         }
 
         public Bitmap Update()

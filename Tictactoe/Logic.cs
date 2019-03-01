@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 
 
-namespace WindowsFormsApplication2
+namespace TicTacToe
 {
     class Logic
     {
@@ -71,6 +71,7 @@ namespace WindowsFormsApplication2
         {
             gameStatus status = isWin(moveCount);
             
+            /*
             for (int i = 0; i < 3; i++)
             { 
                 for ( int j = 0; j < 3; j++)
@@ -80,6 +81,7 @@ namespace WindowsFormsApplication2
                 Console.WriteLine();
             }
             Console.WriteLine();
+            */
                
             if (status != gameStatus.PROCESS)
             {
