@@ -1,7 +1,7 @@
 # Tic-tac-toe
 
 ## About
-Simple Game [Tic-Tac-Toe](https://en.wikipedia.org/wiki/Tic-tac-toe "Tic-Tac-Toe") 
+Simple WinForm Game [Tic-Tac-Toe](https://en.wikipedia.org/wiki/Tic-tac-toe "Tic-Tac-Toe") 
 written in Ulyanovsk State Technical University C# course
 
 ## Interface
