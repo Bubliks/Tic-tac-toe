@@ -2,7 +2,7 @@
 
 ## About
 Simple Game [Tic-Tac-Toe](https://en.wikipedia.org/wiki/Tic-tac-toe "Tic-Tac-Toe") 
-written in Ulyanovsk State Technical University C# course in 2012 year 
+written in Ulyanovsk State Technical University C# course
 
 ## Interface
 ![Interface-img](https://github.com/Bubliks/Tic-tac-toe/blob/master/img/img.png "Interface")
