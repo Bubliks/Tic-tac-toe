@@ -15,5 +15,9 @@ written for graduation project in Ulyanosvk State Technical Univercity C# course
 * Map.cs - for manipulation with picturebox (map)
 * Game.cs - game interface
 
+## How run
+* Compile project
+* Run /bin/project.exe
+
 ## Technologies
 C# VS15 .NET Framework 4.6.1
